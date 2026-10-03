@@ -1,0 +1,19 @@
+services:
+  web:
+    image: python:3.12-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    command:
+      - sh
+      - -ec
+      - pip install --no-cache-dir --quiet flask requests && exec flask --app app run --host 0.0.0.0 --port 3000 --debug
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:3000/')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
